@@ -1,0 +1,15 @@
+This is a small utility that updates our SpaceAPI[1] file in the server with an open/closed status for the space.
+
+It works by checking the MAC addresses of the computers in the space's network and comparing it to a list of addresses of known devices.
+If any of the known devices is in the network, the space is "open", else it is "closed"
+
+We are using our laptop and cellphone MAC addresses.
+
+You need to have 2 things set up beforehand:
+
+1.- Host key based authentication between the computer in the space and your website host
+2.- A list of known MAC addresses of devices that indicate the space is "open"
+
+The list of MAC addresses is found in a simple text file, with one address per line.
+
+[1] http://hackerspaces.nl/spaceapi/
