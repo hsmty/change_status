@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use JSON;
+
+use constant STAT_FILE => '/var/www/hsmty/blog/status.json';
+
+my $op = shift @ARGV;
+my $status = {};
+my $cont = '';
+my $fh;
+
+if (! -r STAT_FILE) {
+	die "Can't read the status file";
+} elsif (! -w STAT_FILE) {
+	die "Cant' write to the status file";
+}
+
+open($fh, '<', STAT_FILE) or die $!;
+
+{
+	local $/;
+	$cont = <$fh>;
+}
+
+close $fh;
+
+$status = decode_json($cont);
+
+if (lc($op) eq 'open') {
+	$status->{open} = JSON::true;	
+} elsif (lc($op) eq 'close') {
+	$status->{open} = JSON::false;	
+} else {
+	die 'Operation not recognized: $op';
+}
+
+$status->{lastchange} = time();
+
+open($fh, '>', STAT_FILE) or die $_;
+print $fh to_json($status);
+close $fh;
