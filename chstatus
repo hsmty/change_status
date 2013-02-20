@@ -29,16 +29,19 @@ close $fh;
 
 $status = decode_json($cont);
 
-if (lc($op) eq 'open') {
+if (lc($op) eq 'open' and !$status->{open}) {
 	$status->{open} = JSON::true;	
-} elsif (lc($op) eq 'close') {
+	savefile(STAT_FILE, $status);
+} elsif (lc($op) eq 'close' and $status->{open}) {
 	$status->{open} = JSON::false;	
-} else {
-	die 'Operation not recognized: $op';
+	savefile(STAT_FILE, $status);
+} 
+
+sub savefile
+{
+	my ($filename, $status) = @_;
+	$status->{lastchange} = time();
+	open($fh, '>', $filename) or die $_;
+	print $fh to_json($status);
+	close $fh;
 }
-
-$status->{lastchange} = time();
-
-open($fh, '>', STAT_FILE) or die $_;
-print $fh to_json($status);
-close $fh;
